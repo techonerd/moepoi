@@ -76,21 +76,21 @@ query($favPage: Int) {
 """
 
 def fetch_favorites(oauth_token, types='anime'):
-    results = []
     variables = {"favPage": 1}
     data = client.execute(
         query=make_query(),
         variables=variables,
         headers={"Authorization": "Bearer {}".format(oauth_token)},
     )
-    for x in data['data']['Viewer']['favourites'][types]['nodes']:
-        results.append(
-            {
-                'title': x['title']['romaji'] if types != 'characters' else x['name']['full'],
-                'url': x['siteUrl']
-            }
-        )
-    return results   
+    return [
+        {
+            'title': x['title']['romaji']
+            if types != 'characters'
+            else x['name']['full'],
+            'url': x['siteUrl'],
+        }
+        for x in data['data']['Viewer']['favourites'][types]['nodes']
+    ]   
 
 if __name__ == "__main__":
     readme = root / "README.md"
